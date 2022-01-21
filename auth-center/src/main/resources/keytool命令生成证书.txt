@@ -1,0 +1,14 @@
+使用keytool命令生成证书：
+keytool  是一个java提供的证书管理工具
+-genkey 
+-alias 密钥的别名
+-keypass 密钥的访问密码
+-keyalg RSA(算法) 
+-keysize 1024(密钥长度) 
+-validity 365(有效期，天单位) 
+-keystore D:/keys/tomcat.keystore(指定生成证书的位置和证书名称) 
+-storepass 密钥库的访问密码(获取keystore信息的密码)
+
+keytool -genkey -alias tomcat -keypass 123456 -keyalg RSA -keysize 1024 -validity 365 -keystore D:/keys/tomcat.keystore -storepass 123456
+
+keytool -genkeypair -alias xundu -keyalg RSA -keypass xundukeystore -keystore xundu.keystore -storepass xundukeystore

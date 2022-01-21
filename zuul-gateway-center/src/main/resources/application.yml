@@ -1,0 +1,89 @@
+server:
+  port: 9070
+zuul:
+  host:
+    connect-timeout-millis: 3000
+    socket-timeout-millis: 3000
+  routes:
+    #这里没有使用服务发现组件，所以将服务服务地址写死
+    #token:
+    #url: http://localhost:9090
+    auth-center:
+      path: /auth/**
+      serviceId: auth-center
+    order-center:
+      path: /order/**
+      serviceId: order-center
+    product-center:
+      path: /product/**
+      serviceId: product-center
+    user-center:
+      path: /user/**
+      serviceId: user-center
+    #这里配置user服务只是需要用此在MFfilter上处理，不是向下转发
+#    user:
+#      url: http://localhost:9060
+  #zuul.sensitiveHeaders设置为空，代表不过滤任何Header信息，Header会向下转发
+  sensitive-headers:
+  ratelimit:
+    enabled: true
+    repository: redis  #对应存储类型（用来存储统计信息）
+    behind-proxy: true  #代理之后
+    default-policy-list: #可选 - 针对所有的路由配置的策略，除非特别配置了policies
+    - limit: 100 #可选 - 每个刷新时间窗口对应的请求数量限制
+      quota: 1000 #可选-  每个刷新时间窗口对应的请求时间限制（秒）
+      refresh-interval: 60 # 刷新时间窗口的时间，默认值 (秒)
+      type: #可选 限流方式
+        - url
+        - httpmethod
+        - origin
+    policy-list: #可选 - 针对所有的路由配置的策略，除非特别配置了policies
+      token: #特定的路由
+      - limit: 100 #可选 - 每个刷新时间窗口对应的请求数量限制
+        quota: 100 #可选-  每个刷新时间窗口对应的请求时间限制（秒）
+        refresh-interval: 3 # 刷新时间窗口的时间，默认值 (秒)
+        type: #可选 限流方式
+          - url
+          - httpmethod
+          - origin
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    jedis:
+      pool:
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password:
+    port: 6379
+  application:
+    name: zuul-gateway-center
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        # 指定namespace 这个可以做到开发环境，预发环境，线上环境的隔离，同环境才可以调用
+        #namespace: cede430e-9610-42ba-9a1e-11bd98ab747e
+security:
+  oauth2:
+    client:
+      #这里的数据和数据库表中记录对应
+      client-id: gateway-center
+      client-secret: 123456
+    resource:
+      jwt:
+        #这条配置的源码在TokenKeyEndpoint类中，资源服务器通过此路径从认证服务器是哪个获取公钥用于解密Token
+        key-uri: http://auth.yibo.com:9090/oauth/token_key

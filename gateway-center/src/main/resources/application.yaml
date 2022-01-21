@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-center
+          uri: lb://auth-center
+          predicates:
+            - Path=/auth/**
+        - id: product-center
+          uri: lb://product-center
+          predicates:
+            - Path=/product/**
+        - id: order-center
+          uri: lb://order-center
+          predicates:
+            - Path=/order/**
+        - id: user-center
+          uri: lb://user-center
+          predicates:
+            - Path=/user/**
+security:
+  oauth2:
+    client:
+      #这里的数据和数据库表中记录对应
+      client-id: gateway-center
+      client-secret: 123456
+    resource:
+      jwt:
+        #这条配置的源码在TokenKeyEndpoint类中，资源服务器通过此路径从认证服务器是哪个获取公钥用于解密Token
+        key-uri: http://auth.yibo.com:9090/oauth/token_key

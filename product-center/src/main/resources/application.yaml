@@ -1,0 +1,23 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: product-center
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        #namespace: 784ade72-a3f0-4802-8c44-287376030069
+      config:
+        server-addr: 127.0.0.1:8848
+        #namespace: 784ade72-a3f0-4802-8c44-287376030069
+security:
+  oauth2:
+    client:
+      #这里的数据和数据库表中记录对应
+      client-id: product-center
+      client-secret: 123456
+    resource:
+      jwt:
+        #这条配置的源码在TokenKeyEndpoint类中，资源服务器通过此路径从认证服务器是哪个获取公钥用于解密Token
+        key-uri: http://auth.yibo.com:9090/oauth/token_key

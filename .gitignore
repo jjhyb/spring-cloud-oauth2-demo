@@ -1,0 +1,7 @@
+# Project exclude paths
+/auth-center/target/
+/gateway-center/target/
+/order-center/target/
+/product-center/target/
+/user-center/target/
+/zuul-gateway-center/target/
