@@ -36,6 +36,5 @@ public class GatewayAuditLogFilter extends OncePerRequestFilter {
             int status = response.getStatus();
             log.info("update log to success execution stateCode={}",status);
         }
-
     }
 }

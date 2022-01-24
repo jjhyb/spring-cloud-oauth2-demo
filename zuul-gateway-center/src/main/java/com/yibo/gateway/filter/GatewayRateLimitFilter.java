@@ -36,9 +36,8 @@ public class GatewayRateLimitFilter extends OncePerRequestFilter {
         }else {
             //被限流了
             //返回自定义异常信息
-            System.out.println("1111111");
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             Map<String, Object> map = new HashMap<>();
             map.put("errorCode", HttpStatus.TOO_MANY_REQUESTS.value());
             map.put("message", "请求太多，服务器繁忙，请稍后再试");

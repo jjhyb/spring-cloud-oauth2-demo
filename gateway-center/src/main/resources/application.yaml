@@ -18,6 +18,42 @@ spring:
           uri: lb://user-center
           predicates:
             - Path=/user/**
+
+  redis:
+    database: 0
+    host: 127.0.0.1
+    jedis:
+      pool:
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password:
+    port: 6379
+  security:
+      oauth2:
+        client:
+          provider:
+            client-id: gateway-center
+            client-secret: 123456
+          registration:
+            client-id: gateway-center
+            client-secret: 123456
+
+        resourceserver:
+          jwt:
+            jwk-set-uri: http://auth.yibo.com:9090/oauth/token_key #配置RSA的公钥访问地址
 security:
   oauth2:
     client:
@@ -28,3 +64,9 @@ security:
       jwt:
         #这条配置的源码在TokenKeyEndpoint类中，资源服务器通过此路径从认证服务器是哪个获取公钥用于解密Token
         key-uri: http://auth.yibo.com:9090/oauth/token_key
+
+secure:
+  ignore:
+    urls: #配置白名单路径
+      - "/actuator/**"
+      - "/auth/oauth/token"
