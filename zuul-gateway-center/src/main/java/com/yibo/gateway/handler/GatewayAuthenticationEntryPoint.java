@@ -57,8 +57,8 @@ public class GatewayAuthenticationEntryPoint extends OAuth2AuthenticationEntryPo
         //返回自定义异常信息
         map.put("errorCode", HttpStatus.UNAUTHORIZED.value());
         map.put("path", request.getRequestURI());
-        map.put("timestamp", String.valueOf(new Date().getTime()));
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        map.put("timestamp", String.valueOf(System.currentTimeMillis()));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(map));
         writer.flush();

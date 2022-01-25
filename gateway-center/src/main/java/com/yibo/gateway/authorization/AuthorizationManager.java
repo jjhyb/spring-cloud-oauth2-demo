@@ -38,7 +38,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         URI uri = authorizationContext.getExchange().getRequest().getURI();
         //权限数据应该是从redis中获取, 下面两张获取方式都可以
         //String obj = (String)redisTemplate.opsForHash().get(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
-        //String obj= (String)redisUtils.hget(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
+        //String obj= (String)redisUtils.hGet(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
         //List<String> authorities = JSONObject.parseArray(obj, String.class);
 
         //权限数据这里写死, 限数据应该是从redis中获取

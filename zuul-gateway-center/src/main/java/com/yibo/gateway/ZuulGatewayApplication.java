@@ -14,11 +14,11 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableZuulProxy
-public class GatewayServerApplication {
+public class ZuulGatewayApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(GatewayServerApplication.class,args);
+        SpringApplication.run(ZuulGatewayApplication.class,args);
     }
 
     @Bean

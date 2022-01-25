@@ -38,7 +38,7 @@ public class GatewayAccessDeniedHandler extends OAuth2AccessDeniedHandler {
         //这里设置是为了GatewayAuditLogFilter里面去获取，如果这里记录了日志，那么GatewayAuditLogFilter的结尾就不记录日志
         request.setAttribute("logUpdate","403");
         //返回自定义异常信息
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Map<String, Object> map = new HashMap<>();
         map.put("errorCode", 403);
         map.put("message", "访问被拒绝");

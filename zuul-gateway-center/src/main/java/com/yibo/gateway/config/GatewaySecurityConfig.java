@@ -24,7 +24,7 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 @EnableResourceServer
 public class GatewaySecurityConfig extends ResourceServerConfigurerAdapter {
 
-    private static final String RESOURCE_ID = "gateway-server";
+    private static final String RESOURCE_ID = "gateway-center";
 
     @Autowired
     private GatewayWebSecurityExpressionHandler gatewayWebSecurityExpressionHandler;
@@ -66,7 +66,7 @@ public class GatewaySecurityConfig extends ResourceServerConfigurerAdapter {
             .addFilterBefore(new GatewayAuditLogFilter(), ExceptionTranslationFilter.class)
             .authorizeRequests()
             //开启/oauth/**验证端口无权限可以访问，即申请令牌的请求不需要带token令牌
-            .antMatchers("/token/**").permitAll()
+            .antMatchers("/auth/oauth/token").permitAll()
             //其他的请求需要带令牌才可以访问网关
 //                .anyRequest().authenticated();
             //手动指定访问规则

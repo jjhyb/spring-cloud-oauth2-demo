@@ -1,10 +1,12 @@
 package com.yibo.gateway.utils;
 
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
+@Slf4j
 public class RedisUtils {
 
     @Autowired
@@ -36,7 +39,7 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.expire 方法指定缓存失效时间异常, key:{}, time:{}", key, time, e);
             return false;
         }
     }
@@ -61,7 +64,7 @@ public class RedisUtils {
         try {
             return redisTemplate.hasKey(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.hashKey 方法判断key是否存在异常, key:{}", key, e);
             return false;
         }
     }
@@ -72,15 +75,19 @@ public class RedisUtils {
      * @param key 可以传一个值 或多个
      */
     public void del(String... key) {
-        if (key != null && key.length > 0) {
-            redisTemplate.delete(key[0]);
-        } else {
-            redisTemplate.delete(CollectionUtils.arrayToList(key));
+        if(key != null){
+            if(key.length == 1){
+                redisTemplate.delete(key[0]);
+            }
+            if(key.length > 1) {
+                redisTemplate.delete(Arrays.asList(key));
+            }
         }
     }
 
 
     //==================================String====================================
+
 
     /**
      * 普通缓存获取
@@ -91,6 +98,7 @@ public class RedisUtils {
     public Object get(String key) {
         return key == null ? null : redisTemplate.opsForValue().get(key);
     }
+
 
     /**
      * 普通缓存放入
@@ -104,10 +112,11 @@ public class RedisUtils {
             redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.set 设置普通缓存异常, key:{}, value:{}",key, JSON.toJSONString(value), e);
             return false;
         }
     }
+
 
     /**
      * 普通缓存放入并设置时间
@@ -126,10 +135,11 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.set 设置普通缓存并设置时间异常, key:{}, value:{}, time:{}",key, JSON.toJSONString(value), time, e);
             return false;
         }
     }
+
 
     /**
      * 递增
@@ -144,6 +154,7 @@ public class RedisUtils {
         }
         return redisTemplate.opsForValue().increment(key, delta);
     }
+
 
     /**
      * 递减
@@ -162,15 +173,17 @@ public class RedisUtils {
 
     // ================================Map=================================
 
+
     /**
      * HashGet
      *
      * @param key  键 不能为null
      * @param item 项 不能为null
      */
-    public Object hget(String key, String item) {
+    public Object hGet(String key, String item) {
         return redisTemplate.opsForHash().get(key, item);
     }
+
 
     /**
      * 获取hashKey对应的所有键值
@@ -178,9 +191,10 @@ public class RedisUtils {
      * @param key 键
      * @return 对应的多个键值
      */
-    public Map<Object, Object> hmget(String key) {
+    public Map<Object, Object> hmGet(String key) {
         return redisTemplate.opsForHash().entries(key);
     }
+
 
     /**
      * HashSet
@@ -188,12 +202,12 @@ public class RedisUtils {
      * @param key 键
      * @param map 对应多个键值
      */
-    public boolean hmset(String key, Map<String, Object> map) {
+    public boolean hmSet(String key, Map<String, Object> map) {
         try {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.hmSet HashSet设置缓存异常, key:{}, map:{}",key, JSON.toJSONString(map), e);
             return false;
         }
     }
@@ -207,7 +221,7 @@ public class RedisUtils {
      * @param time 时间(秒)
      * @return true成功 false失败
      */
-    public boolean hmset(String key, Map<String, Object> map, long time) {
+    public boolean hmSet(String key, Map<String, Object> map, long time) {
         try {
             redisTemplate.opsForHash().putAll(key, map);
             if (time > 0) {
@@ -215,7 +229,7 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.hmSet HashSet设置缓存并设置时间异常, key:{}, map:{}, time:{}", key, JSON.toJSONString(map), time, e);
             return false;
         }
     }
@@ -229,15 +243,16 @@ public class RedisUtils {
      * @param value 值
      * @return true 成功 false失败
      */
-    public boolean hset(String key, String item, Object value) {
+    public boolean hSet(String key, String item, Object value) {
         try {
             redisTemplate.opsForHash().put(key, item, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.hSet hash表中设置缓存异常,key:{}, item:{}, value:{}", key, item, JSON.toJSONString(value), e);
             return false;
         }
     }
+
 
     /**
      * 向一张hash表中放入数据,如果不存在将创建
@@ -248,7 +263,7 @@ public class RedisUtils {
      * @param time  时间(秒) 注意:如果已存在的hash表有时间,这里将会替换原有的时间
      * @return true 成功 false失败
      */
-    public boolean hset(String key, String item, Object value, long time) {
+    public boolean hSet(String key, String item, Object value, long time) {
         try {
             redisTemplate.opsForHash().put(key, item, value);
             if (time > 0) {
@@ -256,7 +271,7 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.hSet hash表中设置缓存异常, key:{}, item:{}, value:{}, time:{}", key, item, JSON.toJSONString(value), time, e);
             return false;
         }
     }
@@ -268,7 +283,7 @@ public class RedisUtils {
      * @param key  键 不能为null
      * @param item 项 可以使多个 不能为null
      */
-    public void hdel(String key, Object... item) {
+    public void hDel(String key, Object... item) {
         redisTemplate.opsForHash().delete(key, item);
     }
 
@@ -292,7 +307,7 @@ public class RedisUtils {
      * @param item 项
      * @param by   要增加几(大于0)
      */
-    public double hincr(String key, String item, double by) {
+    public double hIncr(String key, String item, double by) {
         return redisTemplate.opsForHash().increment(key, item, by);
     }
 
@@ -304,12 +319,13 @@ public class RedisUtils {
      * @param item 项
      * @param by   要减少记(小于0)
      */
-    public double hdecr(String key, String item, double by) {
+    public double hDecr(String key, String item, double by) {
         return redisTemplate.opsForHash().increment(key, item, -by);
     }
 
 
     // ============================set=============================
+
 
     /**
      * 根据key获取Set中的所有值
@@ -320,7 +336,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.sGet 根据key获取Set中的所有值异常, key:{}", key, e);
             return null;
         }
     }
@@ -337,7 +353,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.sHasKey 方法异常, key:{}, value:{}", key, JSON.toJSONString(value), e);
             return false;
         }
     }
@@ -354,7 +370,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.sSet 方法异常, key:{}, values:{}", key, JSON.toJSONString(values), e);
             return 0;
         }
     }
@@ -376,7 +392,7 @@ public class RedisUtils {
             }
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.sSetAndTime 方法异常, key:{}, time:{}, values:{}", key, time, JSON.toJSONString(values), e);
             return 0;
         }
     }
@@ -391,7 +407,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.sGetSetSize 方法异常, key:{}", key, e);
             return 0;
         }
     }
@@ -404,18 +420,19 @@ public class RedisUtils {
      * @param values 值 可以是多个
      * @return 移除的个数
      */
-
     public long setRemove(String key, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().remove(key, values);
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.setRemove 方法异常, key:{}, values:{}", key, JSON.toJSONString(values), e);
             return 0;
         }
     }
 
+
     // ===============================list=================================
+
 
     /**
      * 获取list缓存的内容
@@ -428,7 +445,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lGet 方法异常, key:{}, start:{}, end:{}", key, start, end, e);
             return null;
         }
     }
@@ -443,7 +460,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForList().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lGetListSize 方法异常, key:{}", key, e);
             return 0;
         }
     }
@@ -459,7 +476,7 @@ public class RedisUtils {
         try {
             return redisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lGetIndex 方法异常, key:{}, index:{}", key, index, e);
             return null;
         }
     }
@@ -476,7 +493,7 @@ public class RedisUtils {
             redisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lSet 方法异常, key:{}, value:{}", key, JSON.toJSONString(value), e);
             return false;
         }
     }
@@ -497,10 +514,9 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lSet 方法异常, key:{}, value:{}, time:{}", key, JSON.toJSONString(value), time, e);
             return false;
         }
-
     }
 
 
@@ -516,7 +532,7 @@ public class RedisUtils {
             redisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lSet 方法异常, key:{}, value:{}", key, JSON.toJSONString(value), e);
             return false;
         }
 
@@ -539,7 +555,7 @@ public class RedisUtils {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lSet 方法异常, key:{}, value:{}, time:{}", key, JSON.toJSONString(value), time, e);
             return false;
         }
     }
@@ -553,13 +569,12 @@ public class RedisUtils {
      * @param value 值
      * @return
      */
-
     public boolean lUpdateIndex(String key, long index, Object value) {
         try {
             redisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lUpdateIndex 方法异常, key:{}, index:{}, value:{}", key, index, JSON.toJSONString(value), e);
             return false;
         }
     }
@@ -575,30 +590,57 @@ public class RedisUtils {
      */
     public long lRemove(String key, long count, Object value) {
         try {
-            Long remove = redisTemplate.opsForList().remove(key, count, value);
-            return remove;
+            return redisTemplate.opsForList().remove(key, count, value);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RedisUtils.lRemove 方法异常, key:{}, count:{}, value:{}", key, count, JSON.toJSONString(value), e);
             return 0;
         }
 
     }
 
+
     // ===============================HyperLogLog=================================
 
-    public long pfadd(String key, String value) {
+    /**
+     * 将任意数量的元素添加到指定的 HyperLogLog 里面。
+     * 时间复杂度： 每添加一个元素的复杂度为 O(1) 。
+     * 如果 HyperLogLog 估计的近似基数（approximated cardinality）在命令执行之后出现了变化， 那么命令返回1， 否则返回0 。
+     * 如果命令执行时给定的键不存在， 那么程序将先创建一个空的 HyperLogLog 结构， 然后再执行命令。
+     * @param key
+     * @param value
+     * @return
+     */
+    public long pfAdd(String key, String value) {
         return redisTemplate.opsForHyperLogLog().add(key, value);
     }
 
-    public long pfcount(String key) {
+
+    /**
+     * 返回给定 HyperLogLog 的基数估算值。
+     * PFCOUNT作用于单个key的时候，返回该key的基数。
+     * PFCOUNT命令作用于多个key时，返回并集的近似数。
+     * @param key
+     * @return
+     */
+    public long pfCount(String key) {
         return redisTemplate.opsForHyperLogLog().size(key);
     }
 
-    public void pfremove(String key) {
+
+    public void pfRemove(String key) {
         redisTemplate.opsForHyperLogLog().delete(key);
     }
 
-    public void pfmerge(String key1, String key2) {
+    /**
+     * 将多个 HyperLogLog 合并为一个 HyperLogLog
+     * 将多个HyperLogLog合并为一个HyperLogLog。
+     * 合并后的HyperLogLog的基数接近于全部输入的可见集合的并集。合并得出的hyperLogLog会被存储到destkey中去。
+     *
+     * 返回值：成功返回ok。
+     * @param key1
+     * @param key2
+     */
+    public void pfMerge(String key1, String key2) {
         redisTemplate.opsForHyperLogLog().union(key1, key2);
     }
 

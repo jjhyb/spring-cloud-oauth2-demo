@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description:
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/selectUserByUsername")
+    @GetMapping("/user/selectUserByUsername")
     public UserDO selectUserByUsername(String userName){
         return userService.selectUserByUsername(userName);
     }

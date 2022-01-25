@@ -1,4 +1,4 @@
-package com.yibo.auth.client;
+package com.yibo.auth.feignclient;
 
 import com.yibo.auth.domain.dto.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,6 +18,6 @@ public interface UserFeignClient {
      * @param username
      * @return
      */
-    @GetMapping("/user/selectUserByUsername")
+    @GetMapping("/auth/user/selectUserByUsername")
     UserDTO selectUserByUsername(@RequestParam("username") String username);
 }
