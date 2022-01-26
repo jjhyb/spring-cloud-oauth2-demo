@@ -18,10 +18,13 @@ import java.util.List;
  * @Date: 2022/1/21 18:52
  * @Description: 白名单路径访问时需要移除JWT请求头
  */
+
 @Component
 public class IgnoreUrlsRemoveJwtFilter implements WebFilter {
+
     @Autowired
     private IgnoreUrlsConfig ignoreUrlsConfig;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();

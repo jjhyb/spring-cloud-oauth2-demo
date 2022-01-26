@@ -41,14 +41,17 @@ spring:
       shutdown-timeout: 100ms
     password:
     port: 6379
+
   security:
-      oauth2:
-        resourceserver:
-          jwt:
-            jwk-set-uri: http://auth.yibo.com:9090/oauth/token_key #配置RSA的公钥访问地址
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth.yibo.com:9090/oauth/token_key #配置RSA的公钥访问地址
 
   main:
     allow-bean-definition-overriding: true
+
+# web环境下这样配置, gateway环境这样配置不行
 security:
   oauth2:
     client:

@@ -22,14 +22,14 @@ import java.text.ParseException;
  * @Description: 将登录用户的JWT转化成用户信息的全局过滤器
  */
 
-@Component
+//@Component
 @Slf4j
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String token = exchange.getRequest().getHeaders().getFirst("Authorization");
-        if (!StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(token)) {
             return chain.filter(exchange);
         }
         try {

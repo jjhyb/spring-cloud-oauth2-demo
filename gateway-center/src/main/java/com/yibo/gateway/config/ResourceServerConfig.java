@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -30,6 +31,7 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class ResourceServerConfig {
 
     private final AuthorizationManager authorizationManager;
@@ -42,25 +44,36 @@ public class ResourceServerConfig {
 
     private final IgnoreUrlsRemoveJwtFilter ignoreUrlsRemoveJwtFilter;
 
+    //private final ReactiveJwtDecoder jwtDecoder;
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        http.cors().disable().csrf().disable();
+
         http.oauth2ResourceServer().jwt()
                 .jwtAuthenticationConverter(jwtAuthenticationConverter());
         //自定义处理JWT请求头过期或签名错误的结果
-        //http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
+        http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
         //对白名单路径，直接移除JWT请求头
         http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
         http.authorizeExchange()
-                //开启/oauth/**验证端口无权限可以访问，即申请令牌的请求不需要带token令牌
-                .pathMatchers("/auth/*").permitAll()
+                //开启/auth/**验证端口无权限可以访问，即申请令牌的请求不需要带token令牌
+                .pathMatchers("/auth/**").permitAll()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers(ignoreUrlsConfig.getUrls().toArray(new String[ignoreUrlsConfig.getUrls().size()])).permitAll()//白名单配置
                 .anyExchange().access(authorizationManager)//鉴权管理器配置
                 .and().exceptionHandling()
                 .accessDeniedHandler(restfulAccessDeniedHandler)//处理未授权
-                .authenticationEntryPoint(restAuthenticationEntryPoint)//处理未认证
-                .and().csrf().disable();
+                .authenticationEntryPoint(restAuthenticationEntryPoint);//处理未认证
+
+                /*.and()
+                .oauth2ResourceServer()
+                .jwt()
+                .jwtDecoder(jwtDecoder)
+                .and()
+                .bearerTokenConverter(new ServerBearerTokenAuthenticationConverter());*/
+
         return http.build();
     }
 

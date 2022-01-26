@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
  */
 
 @Configuration
-public class Config {
+public class RedisConfig {
 
     @Bean
     @SuppressWarnings("all")
