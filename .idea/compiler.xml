@@ -7,12 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="product-center" />
-        <module name="user-center" />
         <module name="spring-cloud-oauth2-demo" />
         <module name="auth-center" />
+        <module name="gateway-center" />
         <module name="zuul-gateway-center" />
         <module name="order-center" />
-        <module name="gateway-center" />
+        <module name="user-center" />
       </profile>
     </annotationProcessing>
   </component>
