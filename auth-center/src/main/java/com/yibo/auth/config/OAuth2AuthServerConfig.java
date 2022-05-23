@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.sql.DataSource;
+import java.security.KeyPair;
 
 /**
  * @Author: huangyibo
@@ -66,13 +67,23 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
     public JwtAccessTokenConverter jwtTokenEnhancer(){
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         //使用非对称加密
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("xundu.keystore"),"xundukeystore".toCharArray());
-        jwtAccessTokenConverter.setKeyPair(keyStoreKeyFactory.getKeyPair("xundu"));
+        //KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("xundu.keystore"),"xundukeystore".toCharArray());
+        jwtAccessTokenConverter.setKeyPair(keyPair());
 
         //配置自定义的CustomUserAuthenticationConverter，拓展JWT的存储信息，JWT默认只存了用户信息的username
         DefaultAccessTokenConverter accessTokenConverter = (DefaultAccessTokenConverter) jwtAccessTokenConverter.getAccessTokenConverter();
         accessTokenConverter.setUserTokenConverter(customUserAuthenticationConverter);
         return jwtAccessTokenConverter;
+    }
+
+    /**
+     * 从classpath下的**库中获取**对(公钥+私钥)
+     */
+    @Bean
+    public KeyPair keyPair() {
+        //使用非对称加密
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("xundu.keystore"),"xundukeystore".toCharArray());
+        return keyStoreKeyFactory.getKeyPair("xundu");
     }
 
     /**
@@ -150,6 +161,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
                 //开启/oauth/token_key验证端口认证权限访问
                 //springOAuth会往外暴露/oauth/token_key服务，只有认证通过的请求能访问这个服务拿到tokenKey，通过字符串去验token签名
                 .tokenKeyAccess("isAuthenticated()")
+
                 // 开启/oauth/check_token验证端口认证权限访问
                 .checkTokenAccess("isAuthenticated()");//校验token需要认证通过，可采用http basic认证
     }

@@ -46,7 +46,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://auth.yibo.com:9090/oauth/token_key #配置RSA的公钥访问地址
+          jwk-set-uri: http://auth.yibo.com:9090/rsa/publicKey #配置RSA的公钥访问地址
 
   main:
     allow-bean-definition-overriding: true
@@ -55,16 +55,24 @@ spring:
 security:
   oauth2:
     client:
+      scope: server
       #这里的数据和数据库表中记录对应
       client-id: gateway-center
       client-secret: 123456
+      access-token-uri: http://auth.yibo.com:9090/oauth/token
+      user-authorization-uri: http://auth.yibo.com:9090/oauth/authorize
     resource:
-      jwt:
-        #这条配置的源码在TokenKeyEndpoint类中，资源服务器通过此路径从认证服务器是哪个获取公钥用于解密Token
-        key-uri: http://auth.yibo.com:9090/oauth/token_key
+      token-info-uri: http://auth.yibo.com:9090/oauth/check_token
+      user-info-uri: http://auth.yibo.com:9090/oauth/check_user
+      prefer-token-info: true
+#      jwt:
+#        key-uri: http://auth.yibo.com:9090/oauth/token_key
+    authorization:
+      check-token-access: http://auth.yibo.com:9090/oauth/check_token
+
 
 secure:
   ignore:
     urls: #配置白名单路径
       - "/actuator/**"
-      #- "/auth/oauth/token"
+      - "/auth/oauth/**"
