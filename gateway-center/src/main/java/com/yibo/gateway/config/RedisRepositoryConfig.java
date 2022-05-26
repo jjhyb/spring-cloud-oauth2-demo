@@ -1,26 +1,13 @@
 package com.yibo.gateway.config;
 
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import java.net.UnknownHostException;
-
 /**
  * @author: huangyibo
  * @Date: 2022/1/21 18:50
  * @Description: Redis相关配置
  */
 
-@Configuration
+/*@Configuration
 @EnableRedisRepositories
 public class RedisRepositoryConfig {
 
@@ -54,4 +41,4 @@ public class RedisRepositoryConfig {
 
         return template;
     }
-}
+}*/

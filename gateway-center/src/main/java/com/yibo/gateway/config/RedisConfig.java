@@ -1,27 +1,15 @@
 package com.yibo.gateway.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import java.net.UnknownHostException;
-
 /**
  * @author: huangyibo
  * @Date: 2022/1/24 17:31
  * @Description:
  */
 
-@Configuration
+//@Configuration
 public class RedisConfig {
 
-    @Bean
+    /*@Bean
     @SuppressWarnings("all")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
         // 自定义 String Object
@@ -50,5 +38,5 @@ public class RedisConfig {
         template.afterPropertiesSet();
 
         return template;
-    }
+    }*/
 }

@@ -1,12 +1,6 @@
 package com.yibo.gateway.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author: huangyibo
@@ -14,24 +8,24 @@ import java.util.concurrent.TimeUnit;
  * @Description: StringRedisTemplate实现分布式锁
  */
 
-@Component
+//@Component
 @Slf4j
 public class RedisLockUtils {
 
-    public static final String LOCK_PREFIX = "redis_lock";
+    /*public static final String LOCK_PREFIX = "redis_lock";
 
     public static final int LOCK_EXPIRE = 300; // ms
 
-    @Autowired
+    //@Autowired
     private StringRedisTemplate redisTemplate;
 
-    /**
+    *//**
      * 加锁
      * @param key 锁名称
      * @param value 当前时间 + 超时时间
      * @param timeout 过期时间 ms
      * @return
-     */
+     *//*
     public boolean lock(String key, String value, Integer timeout){
         String lockKey = LOCK_PREFIX + key;
         if(timeout == null || timeout < 0){
@@ -57,11 +51,11 @@ public class RedisLockUtils {
     }
 
 
-    /**
+    *//**
      * 解锁
      * @param key 锁名称
      * @param value 当前时间 + 超时时间
-     */
+     *//*
     public void unlock(String key, String value){
         try {
             String currentValue = redisTemplate.opsForValue().get(key);
@@ -73,5 +67,5 @@ public class RedisLockUtils {
         }catch (Exception e){
             log.error("【redis锁】解锁失败, key:{}, value:{}", key, value, e);
         }
-    }
+    }*/
 }

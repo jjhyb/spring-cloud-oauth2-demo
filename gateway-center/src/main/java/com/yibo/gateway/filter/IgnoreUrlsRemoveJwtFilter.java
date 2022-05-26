@@ -19,8 +19,8 @@ import java.util.List;
  * @Description: 白名单路径访问时需要移除JWT请求头
  */
 
-@Component
-public class IgnoreUrlsRemoveJwtFilter implements WebFilter {
+//@Component
+/*public class IgnoreUrlsRemoveJwtFilter implements WebFilter {
 
     @Autowired
     private IgnoreUrlsConfig ignoreUrlsConfig;
@@ -41,4 +41,4 @@ public class IgnoreUrlsRemoveJwtFilter implements WebFilter {
         }
         return chain.filter(exchange);
     }
-}
+}*/

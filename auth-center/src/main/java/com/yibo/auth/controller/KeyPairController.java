@@ -18,13 +18,13 @@ import java.util.Map;
  * @Description:
  */
 @RestController
-@RequestMapping(value = "rsa")
+@RequestMapping(value = "/rsa")
 public class KeyPairController {
 
     @Autowired
     private KeyPair keyPair;
 
-    @GetMapping(value = "publicKey")
+    @GetMapping(value = "/publicKey")
     public Map<String, Object> getKey(){
         RSAPublicKey aPublic = (RSAPublicKey) keyPair.getPublic();
         RSAKey key = new RSAKey.Builder(aPublic).build();

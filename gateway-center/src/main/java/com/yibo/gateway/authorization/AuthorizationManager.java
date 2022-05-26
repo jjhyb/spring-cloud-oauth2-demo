@@ -1,23 +1,20 @@
 package com.yibo.gateway.authorization;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.common.utils.ConcurrentHashSet;
 import com.yibo.gateway.constant.AuthConstant;
-import com.yibo.gateway.constant.RedisConstant;
-import com.yibo.gateway.utils.RedisUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +25,9 @@ import java.util.stream.Collectors;
  * @Date: 2022/1/21 18:51
  * @Description: 鉴权管理器，用于判断是否有资源的访问权限
  */
+
 @Component
+@Slf4j
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private Set<String> permitAll = new ConcurrentHashSet<>();
@@ -48,11 +47,11 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         permitAll.add("/**/current/get");
     }
 
-    @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    /*@Autowired
+    private RedisConnectionFactory redisConnectionFactory;*/
 
-    @Autowired
-    private RedisUtils redisUtils;
+    /*@Autowired
+    private RedisUtils redisUtils;*/
 
     /**
      * 实现权限验证判断
@@ -61,12 +60,24 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
 
         ServerWebExchange exchange = authorizationContext.getExchange();
+        ServerHttpRequest request = exchange.getRequest();
         //请求资源
-        String requestPath = exchange.getRequest().getURI().getPath();
+        String requestPath = request.getURI().getPath();
 
         // 是否直接放行
         if (permitAll(requestPath)) {
             return Mono.just(new AuthorizationDecision(true));
+        }
+        
+        // 从Header里取出token的值
+        String authorizationToken = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isEmpty(authorizationToken)) {
+            authorizationToken = request.getQueryParams().getFirst("access_token");
+        }
+
+        if (StringUtils.isEmpty(authorizationToken)) {
+            log.warn("当前请求头Authorization中的值不存在");
+            return Mono.just(new AuthorizationDecision(false));
         }
 
         //从Redis中获取当前路径可访问角色列表
@@ -77,17 +88,32 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         //List<String> authorities = JSONObject.parseArray(pathAuth, String.class);
 
         //权限数据这里写死, 限数据应该是从redis中获取
-        List<String> authorities = Arrays.asList("ROLE_USER", "ROLE_ADMIN");
+        List<String> authorities = Arrays.asList("USER", "ADMIN");
         authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
 
+        /*RedisTokenStore redisTokenStore = new RedisTokenStore(redisConnectionFactory);
+        String token = authorizationToken.replace(OAuth2AccessToken.BEARER_TYPE + " ", "");
+        OAuth2Authentication oAuth2Authentication = redisTokenStore.readAuthentication(token);
+        Collection<GrantedAuthority> authorities = oAuth2Authentication.getAuthorities(); // 取到角色
+        Map<String, List<String>> resourceRolesMap = redisTemplate.opsForHash().entries(AUTH_TO_RESOURCE);
+        List<String> pathAuthorities = resourceRolesMap.get(path);
+        for (GrantedAuthority authority : authorities) {
+            if (pathAuthorities.contains(authority.getAuthority())) {
+                return Mono.just(new AuthorizationDecision(true));
+            }
+        }
+        return Mono.just(new AuthorizationDecision(false));*/
+
+        return Mono.just(new AuthorizationDecision(true));
+
         //认证通过且角色匹配的用户可访问当前路径
-        return mono
+        /*return mono
                 .filter(Authentication::isAuthenticated)
                 .flatMapIterable(Authentication::getAuthorities)
                 .map(GrantedAuthority::getAuthority)
                 .any(authorities::contains)
                 .map(AuthorizationDecision::new)
-                .defaultIfEmpty(new AuthorizationDecision(false));
+                .defaultIfEmpty(new AuthorizationDecision(false));*/
     }
 
     /**
@@ -97,7 +123,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
      */
     private boolean permitAll(String requestPath) {
         return permitAll.stream()
-                .filter(r -> antPathMatcher.match(r, requestPath)).findFirst().isPresent();
+                .anyMatch(r -> antPathMatcher.match(r, requestPath));
     }
 
 }

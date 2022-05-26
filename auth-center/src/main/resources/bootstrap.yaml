@@ -1,0 +1,12 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: auth-center
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        #namespace: 784ade72-a3f0-4802-8c44-287376030069
+      config:
+        server-addr: 127.0.0.1:8848
