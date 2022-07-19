@@ -1,7 +1,7 @@
 package com.yibo.gateway.filter;
 
 
-import com.nimbusds.jose.JWSObject;
+/*import com.nimbusds.jose.JWSObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
 
 import java.text.ParseException;
 
-/**
+*//**
  * @author: huangyibo
  * @Date: 2022/1/21 18:40
  * @Description: 将登录用户的JWT转化成用户信息的全局过滤器
- */
+ *//*
 
 @Component
 @Slf4j
@@ -48,4 +48,4 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     public int getOrder() {
         return 0;
     }
-}
+}*/

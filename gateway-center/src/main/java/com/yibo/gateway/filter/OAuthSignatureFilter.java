@@ -1,45 +1,43 @@
 package com.yibo.gateway.filter;
 
-import org.springframework.beans.factory.annotation.Value;
+/*import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-/**
+*//**
  * @author: huangyibo
  * @Date: 2022/5/24 16:46
  * @Description:
- */
+ *//*
 
 //@Component
 public class OAuthSignatureFilter implements GlobalFilter, Ordered {
 
 
-    /**受权访问用户名*/
+    *//**受权访问用户名*//*
     @Value("${spring.security.user.name}")
     private String securityUserName;
 
-    /**受权访问密码*/
+    *//**受权访问密码*//*
     @Value("${spring.security.user.password}")
     private String securityUserPassword;
 
-    /**
+    *//**
      * OAuth过滤器
      * @param exchange
      * @param chain
      * @return
-     */
+     *//*
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        /**oauth受权*/
+        *//**oauth受权*//*
         String auth= securityUserName.concat(":").concat(securityUserPassword);
         String encodedAuth = new sun.misc.BASE64Encoder().encode(auth.getBytes(StandardCharsets.UTF_8));
         //注意Basic后面有空格
@@ -53,13 +51,13 @@ public class OAuthSignatureFilter implements GlobalFilter, Ordered {
     }
 
 
-    /**
+    *//**
      * 优先级
      * 数字越大优先级越低
      * @return
-     */
+     *//*
     @Override
     public int getOrder() {
         return 2;
     }
-}
+}*/

@@ -53,12 +53,12 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     /*@Autowired
     private RedisUtils redisUtils;*/
 
+
     /**
      * 实现权限验证判断
      */
     @Override
     public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
-
         ServerWebExchange exchange = authorizationContext.getExchange();
         ServerHttpRequest request = exchange.getRequest();
         //请求资源
@@ -72,7 +72,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         // 从Header里取出token的值
         String authorizationToken = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (StringUtils.isEmpty(authorizationToken)) {
-            authorizationToken = request.getQueryParams().getFirst("access_token");
+            authorizationToken = request.getQueryParams().getFirst("Access_Token");
         }
 
         if (StringUtils.isEmpty(authorizationToken)) {

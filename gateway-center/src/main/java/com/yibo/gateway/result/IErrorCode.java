@@ -8,7 +8,7 @@ package com.yibo.gateway.result;
 
 public interface IErrorCode {
 
-    long getCode();
+    Integer getCode();
 
     String getMessage();
 }

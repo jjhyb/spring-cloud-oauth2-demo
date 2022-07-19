@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.sql.DataSource;
 import java.security.KeyPair;
@@ -100,18 +102,19 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
                 .tokenEnhancer(this.jwtTokenEnhancer())
                 .authenticationManager(authenticationManager) //认证管理器
                 .exceptionTranslator(customWebResponseExceptionTranslator); //认证管理器
+                //.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
     }
 
     /**
      * 将客户端信息存储到数据库
      * @return
      */
-    /*@Bean
+    @Bean
     public ClientDetailsService clientDetailsService() {
-        ClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder);
+        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+        clientDetailsService.setPasswordEncoder(passwordEncoder);
         return clientDetailsService;
-    }*/
+    }
 
     /**
      * 客户端详情服务配置，让认证服务器知道有哪些客户端应用来请求令牌
@@ -127,10 +130,10 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
         //这个地方指的是从jdbc查出数据来存储
 
         // 使用基于 JDBC 存储模式
-        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+        //JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
         // client_secret 加密
-        clientDetailsService.setPasswordEncoder(passwordEncoder);
-        clients.withClientDetails(clientDetailsService);
+        //clientDetailsService.setPasswordEncoder(passwordEncoder);
+        clients.withClientDetails(clientDetailsService());
 
         //客户端信息 Memory配置方式
 //        clients.inMemory()
@@ -160,9 +163,12 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
         security
                 //开启/oauth/token_key验证端口认证权限访问
                 //springOAuth会往外暴露/oauth/token_key服务，只有认证通过的请求能访问这个服务拿到tokenKey，通过字符串去验token签名
-                .tokenKeyAccess("isAuthenticated()")
+                //.tokenKeyAccess("isAuthenticated()")
+                .tokenKeyAccess("permitAll()")
 
                 // 开启/oauth/check_token验证端口认证权限访问
-                .checkTokenAccess("isAuthenticated()");//校验token需要认证通过，可采用http basic认证
+                .checkTokenAccess("isAuthenticated()")//校验token需要认证通过，可采用http basic认证
+                //主要是让/oauth/token支持client_id以及client_secret作登录认证
+                .allowFormAuthenticationForClients();
     }
 }

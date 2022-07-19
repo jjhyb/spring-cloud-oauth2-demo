@@ -42,11 +42,11 @@ spring:
 #    password:
 #    port: 6379
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://auth.yibo.com:9090/rsa/publicKey #配置RSA的公钥访问地址
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: 'http://auth.yibo.com:9090/rsa/publicKey' #配置RSA的公钥访问地址
 
   main:
     allow-bean-definition-overriding: true
@@ -75,4 +75,4 @@ secure:
   ignore:
     urls: #配置白名单路径
       - "/actuator/**"
-      - "/auth/oauth/token"
+      - "/*/oauth/**"
