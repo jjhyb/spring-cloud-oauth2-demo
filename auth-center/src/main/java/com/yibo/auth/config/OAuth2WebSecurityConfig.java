@@ -72,17 +72,13 @@ public class OAuth2WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //http.requestMatchers().anyRequest().and().authorizeRequests().antMatchers("/oauth/**").permitAll();
-        /*http.authorizeRequests()
+        http.authorizeRequests()
             .antMatchers("/oauth/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .formLogin().and()  //.formLogin().loginPage()可以指定登录的自定义页面
             .httpBasic().and()
             .logout()
-            .logoutSuccessHandler(oAuth2LogoutSuccessHandler);*/
-        http.authorizeRequests()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-                .antMatchers("/rsa/publicKey").permitAll()
-                .anyRequest().authenticated();
+            .logoutSuccessHandler(oAuth2LogoutSuccessHandler);
     }
 }

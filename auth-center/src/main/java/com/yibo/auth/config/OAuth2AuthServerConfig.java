@@ -30,6 +30,8 @@ import java.security.KeyPair;
  * @Author: huangyibo
  * @Date: 2021/8/18 23:04
  * @Description: AuthorizationServerConfigurerAdapter OAuth2授权服务器配置的适配器类
+ * OAuth2AuthServerConfig这个配置类是整个认证服务实现的核心。
+ * 总结下来就是两个关键点，客户端信息配置和access_token生成配置。
  */
 
 @Configuration
@@ -65,6 +67,10 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
         return new JwtTokenStore(this.jwtTokenEnhancer());
     }
 
+    /**
+     * JWT内容增强
+     * @return
+     */
     @Bean
     public JwtAccessTokenConverter jwtTokenEnhancer(){
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
@@ -90,6 +96,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 
     /**
      * 让认证服务器知道哪些用户可以来访问认证服务器
+     * 配置授权（authorization）以及令牌（token）的访问端点和令牌服务(token services)
      * @param endpoints
      * @throws Exception
      */
